@@ -4,16 +4,25 @@ import { MenuDrawer } from "../../molecules/MenuDrawer";
 
 import { memo, useCallback, VFC } from "react";
 import { useHistory } from "react-router-dom";
+import { useLoginUser } from "../../../hooks/useLoginUser";
+import { useMessage } from "../../../hooks/useMessage";
 
 export const Header: VFC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const history = useHistory();
+  const { setLoginUser } = useLoginUser();
+  const { showMessage } = useMessage();
   const onClickHome = useCallback(() => history.push("/home"), []);
   const onClickUserManagemant = useCallback(
     () => history.push("/home/user_management"),
     []
   );
   const onClickSetting = useCallback(() => history.push("/home/setting"), []);
+  const onClickLogout = useCallback(() => {
+    setLoginUser(null);
+    showMessage({ title: "ログアウトしました", status: "success" });
+    history.push("/");
+  }, []);
 
   return (
     <>
@@ -45,8 +54,11 @@ export const Header: VFC = memo(() => {
           <Box pr={4}>
             <Link onClick={onClickUserManagemant}>ユーザー一覧</Link>
           </Box>
-          <Box>
+          <Box pr={4}>
             <Link onClick={onClickSetting}>設定</Link>
+          </Box>
+          <Box>
+            <Link onClick={onClickLogout}>ログアウト</Link>
           </Box>
         </Flex>
         <MenuIconButton onOpen={onOpen} />
@@ -57,6 +69,7 @@ export const Header: VFC = memo(() => {
         onClickHome={onClickHome}
         onClickUserManagemant={onClickUserManagemant}
         onClickSetting={onClickSetting}
+        onClickLogout={onClickLogout}
       />
     </>
   );

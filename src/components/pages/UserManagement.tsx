@@ -12,14 +12,25 @@ import { useAllUsers } from "../../hooks/useAllUsers";
 import { useSelectUser } from "../../hooks/useSelectUser";
 import { UserDetailModal } from "../organisms/user/UserDetailModal";
 import { useLoginUser } from "../../hooks/useLoginUser";
+import { useHistory } from "react-router-dom";
+import { useMessage } from "../../hooks/useMessage";
 
 export const UserManagement: VFC = memo(() => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { getUsers, users, loading } = useAllUsers();
   const { onSelectUser, selectedUser } = useSelectUser();
   const { loginUser } = useLoginUser();
+  const { showMessage } = useMessage();
+  const history = useHistory();
 
-  useEffect(() => getUsers(), []);
+  useEffect(() => {
+    if (!loginUser) {
+      showMessage({ title: "ログインしてください", status: "error" });
+      history.push("/");
+    }
+  });
+
+  useEffect(() => getUsers());
 
   const onClickUser = useCallback(
     (id: number) => {
